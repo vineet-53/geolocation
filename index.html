@@ -76,13 +76,14 @@
       // Check if within the allowed range (e.g., 100 meters)
       let allowedRange = 20; 
       
+      let message =""; 
       if (distance <= allowedRange) {
         console.log("✅ Student is within the allowed range!");
-        document.getElementById('#location').innerHTML = `<h1>✅ Student is within the allowed range!</h1> <p>  
-        Distance from admin location: ${distance.toFixed(2)} meters
-          </p>`
+        document.getElementById('location').innerHTML = `<h1>✅ Student is within the allowed range!</h1> <p> Distance from admin location: ${distance.toFixed(2)} meters </p>`
       } else {
         console.log("❌ Student is outside the allowed range!");
+
+        document.getElementById('location').innerHTML = `❌ Student is outside the allowed range!`
       }
     </script>
   </body>
