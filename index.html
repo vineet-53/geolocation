@@ -1,43 +1,89 @@
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <title>Geolocation Example</title>
-</head>
-<body>
+  </head>
+  <body>
     <button onclick="getLocation()">Get My Location</button>
     <p id="location"></p>
-
+    <form id="form">
+      <input name="distance" placeholder="Enter the range" type="text" />
+      <button type="submit">set</button>
+    </form>
     <script>
-        function getLocation() {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(showPosition, showError);
-            } else {
-                document.getElementById("location").innerHTML = "Geolocation is not supported by this browser.";
-            }
+      let studentLat , studentLon; 
+      function getLocation() {
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else {
+          document.getElementById("location").innerHTML =
+            "Geolocation is not supported by this browser.";
         }
+      }
 
-        function showPosition(position) {
-            document.getElementById("location").innerHTML = 
-                "Latitude: " + position.coords.latitude + 
-                "<br>Longitude: " + position.coords.longitude;
-        }
+      function showPosition(position) {
+          studentLat = position.coords.latitude; 
+          studentLon = position.coords.longitude;
+      }
 
-        function showError(error) {
-            switch(error.code) {
-                case error.PERMISSION_DENIED:
-                    alert("User denied the request for Geolocation.");
-                    break;
-                case error.POSITION_UNAVAILABLE:
-                    alert("Location information is unavailable.");
-                    break;
-                case error.TIMEOUT:
-                    alert("The request to get user location timed out.");
-                    break;
-                case error.UNKNOWN_ERROR:
-                    alert("An unknown error occurred.");
-                    break;
-            }
+      function showError(error) {
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            alert("User denied the request for Geolocation.");
+            break;
+          case error.POSITION_UNAVAILABLE:
+            alert("Location information is unavailable.");
+            break;
+          case error.TIMEOUT:
+            alert("The request to get user location timed out.");
+            break;
+          case error.UNKNOWN_ERROR:
+            alert("An unknown error occurred.");
+            break;
         }
+      }
+      function getDistanceFromLatLonInMeters(lat1, lon1, lat2, lon2) {
+        const R = 6371000; // Radius of the Earth in meters
+        const dLat = ((lat2 - lat1) * Math.PI) / 180;
+        const dLon = ((lon2 - lon1) * Math.PI) / 180;
+        const a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos((lat1 * Math.PI) / 180) *
+            Math.cos((lat2 * Math.PI) / 180) *
+            Math.sin(dLon / 2) *
+            Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const distance = R * c; // Distance in meters
+        return distance;
+      }
+
+      // Admin-defined location (latitude, longitude)
+      const adminLat = 30.2734705;
+      const adminLon = 78.0002151;
+
+      // Distance calculation
+      const distance = getDistanceFromLatLonInMeters(
+        adminLat,
+        adminLon,
+        studentLat,
+        studentLon
+      );
+
+      console.log(
+        `Distance from admin location: ${distance.toFixed(2)} meters`
+      );
+
+      // Check if within the allowed range (e.g., 100 meters)
+      let allowedRange = 20; 
+      
+      if (distance <= allowedRange) {
+        console.log("✅ Student is within the allowed range!");
+        document.getElementById('#location').innerHTML = `<h1>✅ Student is within the allowed range!</h1> <p>  
+        Distance from admin location: ${distance.toFixed(2)} meters
+          </p>`
+      } else {
+        console.log("❌ Student is outside the allowed range!");
+      }
     </script>
-</body>
+  </body>
 </html>
